@@ -24,6 +24,7 @@ func main() {
 				HelpMsg: "sub <arg1> <arg2> <arg3> ...",
 			},
 		},
+		DefaultHandler: func(args []string) string { return "unrecognized command" },
 	}
 
 	sshell.StartShell(s)
@@ -68,9 +69,3 @@ func subtract(args []string) string {
 
 	return totalStr
 }
-
-/*
-func calc(args []string) string {
-
-}
-*/

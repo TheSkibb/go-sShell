@@ -5,23 +5,25 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 )
 
 type ShellSettings struct {
-	promt    string
-	exitMsg  string
-	commands []Command
+	Promt    string
+	ExitMsg  string
+	Commands []Command
 }
 
 type Command struct {
-	input   string
-	handler func() string
+	Input   string
+	Handler func(args []string) string
+	HelpMsg string
 }
 
 func (s ShellSettings) getCommandIndex(command string) int {
 
-	for i, c := range s.commands {
-		if c.input == command {
+	for i, c := range s.Commands {
+		if c.Input == command {
 			return i
 		}
 	}
@@ -33,9 +35,9 @@ func StartShell(s ShellSettings) {
 	reader := bufio.NewReader(os.Stdin)
 	input := ""
 
-	for input != s.exitMsg {
+	for input != s.ExitMsg {
 
-		fmt.Print(s.promt)
+		fmt.Print(s.Promt)
 		var err error //necessary so input is not redeclared
 		input, err = reader.ReadString('\n')
 
@@ -52,15 +54,47 @@ func StartShell(s ShellSettings) {
 
 func handleInput(s ShellSettings, input string) {
 
-	if input == "" {
+	if input == "" || input == s.ExitMsg {
 		return
 	}
 
-	index := s.getCommandIndex(input)
+	split := strings.Split(input, " ")
+	cmd := split[0]
+	args := split[1:]
+
+	if cmd == "help" {
+		handleHelp(s, args)
+		return
+	}
+
+	index := s.getCommandIndex(cmd)
+
 	if index == -1 {
 		fmt.Println("unrecognized command")
 		return
 	} else {
-		fmt.Println(s.commands[index].handler())
+		fmt.Println(s.Commands[index].Handler(args))
+	}
+}
+
+func handleHelp(s ShellSettings, args []string) {
+
+	if len(args) == 0 {
+		fmt.Println("please specify what command you want help for")
+		return
+	}
+
+	if args[0] == "help" {
+		fmt.Println("help <cmd>: prints the help message for the specified command")
+		return
+	}
+
+	index := s.getCommandIndex(args[0])
+
+	if index != -1 {
+		fmt.Println(s.Commands[index].HelpMsg)
+		return
+	} else {
+		fmt.Println("unrecognized command")
 	}
 }

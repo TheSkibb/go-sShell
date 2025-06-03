@@ -9,12 +9,14 @@ to create a shell using the library you need to create a **ShellSettings** struc
 - **Prompt**: the prompt indicator for the shell
 - **ExitMsg**: typing this message will stop the shell
 - **Commands**: an array of **Command** structs
+- **DefaultHandler**: handles inputs which are not in the **commands** array
+    - needs to be a func(args []string) string
 
 **Command** structs need three fields:
 
 - **Input**: the command name you write into the shell
 - **handler**: the function which will execute when you run the command
-    - need to be a func(args []string) string
+    - needs to be a func(args []string) string
 - **HelpMsg**: the string which will be displayed for this command when you run **help**
 
 ## examples

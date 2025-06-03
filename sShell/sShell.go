@@ -2,6 +2,7 @@ package sshell
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -9,9 +10,10 @@ import (
 )
 
 type ShellSettings struct {
-	Promt    string
-	ExitMsg  string
-	Commands []Command
+	Promt          string
+	ExitMsg        string
+	Commands       []Command
+	DefaultHandler func(args []string) string
 }
 
 type Command struct {
@@ -31,9 +33,13 @@ func (s ShellSettings) getCommandIndex(command string) int {
 	return -1
 }
 
-func StartShell(s ShellSettings) {
+func StartShell(s ShellSettings) error {
 	reader := bufio.NewReader(os.Stdin)
 	input := ""
+
+	if s.DefaultHandler == nil {
+		return errors.New("no default handler specified")
+	}
 
 	for input != s.ExitMsg {
 
@@ -50,6 +56,8 @@ func StartShell(s ShellSettings) {
 
 		handleInput(s, input)
 	}
+
+	return nil
 }
 
 func handleInput(s ShellSettings, input string) {
@@ -70,7 +78,7 @@ func handleInput(s ShellSettings, input string) {
 	index := s.getCommandIndex(cmd)
 
 	if index == -1 {
-		fmt.Println("unrecognized command")
+		fmt.Println(s.DefaultHandler(split))
 		return
 	} else {
 		fmt.Println(s.Commands[index].Handler(args))

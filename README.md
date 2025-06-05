@@ -21,5 +21,6 @@ to create a shell using the library you need to create a **ShellSettings** struc
 
 ## examples
 
-for examples of how to use the library, see the examples folder
+for examples of how to use the library, see the examples folder.
+
 

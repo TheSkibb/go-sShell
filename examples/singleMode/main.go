@@ -1,3 +1,7 @@
+/*
+sometimes, you only need to send one command, and get the result back
+in this case, you can use singleMode
+*/
 package main
 
 import (
@@ -18,10 +22,11 @@ func main() {
 				HelpMsg: "reverses the order of the words input",
 			},
 		},
-		DefaultHandler: func(args []string) string { return "unrecognized command" },
-		SingleMode:     true,
+		DefaultHandler: func(args []string) string { return "unrecognized command" }, //in single mode, unrecognized command, or help will reprompt you
+		SingleMode:     true,                                                         //**single mode** is on
 	}
 
+	//the output from the command you run will end up in the result variable
 	result, err := sshell.StartShell(s)
 
 	if err != nil {

@@ -1,5 +1,11 @@
 # sShell - A simple golang shell library
 
+## installation
+
+~~~bash
+github.com/TheSkibb/sShell
+~~~
+
 ## how to use
 
 to create a shell using the library you need to create a **ShellSettings** struct

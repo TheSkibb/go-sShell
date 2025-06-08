@@ -25,6 +25,7 @@ to create a shell using the library you need to create a **ShellSettings** struc
 - **Commands**: an array of **Command** structs
 - **DefaultHandler**: handles inputs which are not in the **commands** array
     - needs to be a func(args []string) string
+- **SingleMode**: boolean. if set to true, you only get to do one command, the result of which is returned from the StartShell function
 
 **Command** structs need three fields:
 

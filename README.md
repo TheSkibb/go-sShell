@@ -9,7 +9,9 @@ go get github.com/theskibb/sShell
 you can now import the library with 
 
 ~~~go
-go get github.com/theskibb/sShell
+import(
+    "github.com/theskibb/sShell/sShell"
+)
 ~~~
 
 ## how to use

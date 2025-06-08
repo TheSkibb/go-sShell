@@ -57,7 +57,7 @@ func StartShell(s ShellSettings) (string, error) {
 		input = input[:len(input)-1]
 
 		output = handleInput(s, input)
-		if s.SingleMode {
+		if s.SingleMode && input[0:3] != "help" && output != "unrecognized command" {
 			return output, nil
 		} else {
 			fmt.Println(output)

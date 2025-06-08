@@ -14,6 +14,7 @@ type ShellSettings struct {
 	ExitMsg        string
 	Commands       []Command
 	DefaultHandler func(args []string) string
+	SingleMode     bool
 }
 
 type Command struct {
@@ -33,12 +34,13 @@ func (s ShellSettings) getCommandIndex(command string) int {
 	return -1
 }
 
-func StartShell(s ShellSettings) error {
+func StartShell(s ShellSettings) (string, error) {
 	reader := bufio.NewReader(os.Stdin)
 	input := ""
+	output := ""
 
 	if s.DefaultHandler == nil {
-		return errors.New("no default handler specified")
+		return "", errors.New("no default handler specified")
 	}
 
 	for input != s.ExitMsg {
@@ -54,16 +56,21 @@ func StartShell(s ShellSettings) error {
 		// remove newline
 		input = input[:len(input)-1]
 
-		handleInput(s, input)
+		output = handleInput(s, input)
+		if s.SingleMode {
+			return output, nil
+		} else {
+			fmt.Println(output)
+		}
 	}
 
-	return nil
+	return "", nil
 }
 
-func handleInput(s ShellSettings, input string) {
+func handleInput(s ShellSettings, input string) string {
 
 	if input == "" || input == s.ExitMsg {
-		return
+		return ""
 	}
 
 	split := strings.Split(input, " ")
@@ -71,38 +78,39 @@ func handleInput(s ShellSettings, input string) {
 	args := split[1:]
 
 	if cmd == "help" {
-		handleHelp(s, args)
-		return
+		return handleHelp(s, args)
 	}
 
 	index := s.getCommandIndex(cmd)
 
 	if index == -1 {
-		fmt.Println(s.DefaultHandler(split))
-		return
+		return s.DefaultHandler(split)
 	} else {
-		fmt.Println(s.Commands[index].Handler(args))
+		return s.Commands[index].Handler(args)
 	}
 }
 
-func handleHelp(s ShellSettings, args []string) {
+func handleHelp(s ShellSettings, args []string) string {
 
 	if len(args) == 0 {
-		fmt.Println("please specify what command you want help for")
-		return
+		//get list of commands
+		commands := ""
+		for i := range s.Commands {
+			commands += s.Commands[i].Input + "\n"
+		}
+
+		return "please specify what command you want help for. The available commands are:" + commands
 	}
 
 	if args[0] == "help" {
-		fmt.Println("help <cmd>: prints the help message for the specified command")
-		return
+		return "help <cmd>: prints the help message for the specified command"
 	}
 
 	index := s.getCommandIndex(args[0])
 
 	if index != -1 {
-		fmt.Println(s.Commands[index].HelpMsg)
-		return
+		return s.Commands[index].HelpMsg
 	} else {
-		fmt.Println("unrecognized command")
+		return "unrecognized command"
 	}
 }

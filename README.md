@@ -3,7 +3,13 @@
 ## installation
 
 ~~~bash
-github.com/TheSkibb/sShell
+go get github.com/theskibb/sShell
+~~~
+
+you can now import the library with 
+
+~~~go
+go get github.com/theskibb/sShell
 ~~~
 
 ## how to use
